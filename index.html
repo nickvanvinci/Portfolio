@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nipun Sharma – Creative Portfolio</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,400;1,700&display=swap');
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#f8f7f3;
+  --bg1:#f1f0ea;
+  --bg2:#e9e8e1;
+  --ink:#0d0d0c;
+  --ink2:#585654;
+  --ink3:#a8a69d;
+  --line:rgba(0,0,0,0.07);
+  --gold:#8c6830;
+  --box-b:rgba(0,0,0,0.10);
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--ink3)}
+
+/* 6 VERTICAL LINES */
+#vlines{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex}
+.vc{flex:1;height:100%;border-right:1px solid rgba(0,0,0,0.045)}
+.vc:last-child{border-right:none}
+
+/* FIXED SIDE EMAIL */
+#side-email{
+  position:fixed;right:20px;top:50%;
+  transform:translateY(-50%);
+  z-index:500;writing-mode:vertical-rl;
+  font-size:9px;letter-spacing:.18em;
+  color:var(--ink3);text-decoration:none;
+  text-transform:lowercase;transition:color .25s;
+  display:flex;align-items:center;gap:10px;
+}
+#side-email:hover{color:var(--ink)}
+#side-email::before{content:'';width:1px;height:36px;background:var(--ink3);display:block}
+#side-email::after{content:'';width:1px;height:36px;background:var(--ink3);display:block}
+
+/* CURSOR */
+#cd{position:fixed;width:6px;height:6px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#cr{position:fixed;width:32px;height:32px;border:1px solid rgba(0,0,0,.18);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .22s,height .22s,border-color .22s}
+body.hs #cr{width:54px;height:54px;border-color:rgba(140,104,48,.45)}
+
+/* NAV */
+nav{position:fixed;inset:0 0 auto;z-index:999;display:flex;justify-content:space-between;align-items:center;padding:28px 80px;transition:padding .35s,background .35s,backdrop-filter .35s}
+nav.s{padding:16px 80px;background:rgba(248,247,243,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.nav-logo{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:600}
+nav ul{display:flex;gap:44px;list-style:none}
+nav ul a{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);text-decoration:none;transition:color .25s}
+nav ul a:hover{color:var(--ink)}
+
+/* HERO */
+#hero{position:relative;height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 80px 80px;overflow:hidden}
+#threeCanvas{position:absolute;inset:0;z-index:0}
+#threeCanvas canvas{width:100%!important;height:100%!important}
+.hero-inner{position:relative;z-index:2}
+.hero-label{display:inline-flex;align-items:center;gap:14px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink2);border:1px solid var(--box-b);padding:7px 16px;margin-bottom:32px;background:rgba(248,247,243,.7);backdrop-filter:blur(8px)}
+.hero-label::before{content:'';width:20px;height:1px;background:var(--ink3)}
+h1#h1{font-size:clamp(58px,8.5vw,122px);font-weight:200;line-height:.9;letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px;color:var(--ink)}
+.hero-subtitle{font-size:clamp(18px,2.2vw,30px);font-family:'Playfair Display',serif;font-style:italic;font-weight:400;color:var(--ink2);letter-spacing:.01em;margin-bottom:52px}
+.hero-subtitle em{color:var(--gold);font-style:italic}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end}
+.hero-desc{max-width:360px;font-size:13px;line-height:1.85;color:var(--ink2)}
+.scroll-ind{display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3)}
+.scroll-line{width:40px;height:1px;background:var(--ink3);animation:sla 2.2s ease-in-out infinite}
+@keyframes sla{0%,100%{opacity:.3;transform:scaleX(1)}50%{opacity:1;transform:scaleX(1.5)}}
+.vr-deco{position:absolute;right:80px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;opacity:.3}
+.vr-deco span{writing-mode:vertical-rl;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.vr-deco::before,.vr-deco::after{content:'';width:1px;height:60px;background:var(--ink3)}
+
+/* TICKER */
+.ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(241,240,234,.8);overflow:hidden;padding:14px 0;white-space:nowrap;position:relative;z-index:1}
+.tt{display:inline-block;animation:tk 32s linear infinite}
+.ti{display:inline-block;margin:0 32px;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3)}
+.td{color:var(--gold);margin:0 2px;font-size:7px;vertical-align:middle}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.sw{padding:100px 80px;border-top:1px solid var(--line);position:relative;z-index:1}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:72px}
+.sec-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--box-b);font-size:9px;letter-spacing:.08em;color:var(--ink3);flex-shrink:0}
+.sec-label{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink3)}
+.sec-rule{flex:1;height:1px;background:var(--line)}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start}
+h2#h2a{font-size:clamp(24px,2.6vw,42px);font-weight:300;line-height:1.26;letter-spacing:-.015em;margin-bottom:48px}
+h2#h2a em{font-style:italic;font-family:'Playfair Display',serif}
+.stats-row{display:flex;gap:2px;margin-top:8px}
+.stat-box{flex:1;border:1px solid var(--box-b);padding:20px 24px;transition:background .25s}
+.stat-box:hover{background:var(--bg1)}
+.stat-n{font-size:44px;font-weight:200;letter-spacing:-.03em;line-height:1}
+.stat-l{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:5px}
+.about-body{font-size:13px;line-height:1.88;color:var(--ink2);margin-bottom:22px}
+.skills-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:28px}
+.sk{padding:4px 12px;border:1px solid var(--box-b);font-size:10px;letter-spacing:.04em;color:var(--ink2);transition:all .25s;cursor:default}
+.sk:hover{border-color:rgba(0,0,0,.22);color:var(--ink);background:var(--bg1)}
+.tools-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.tc{padding:3px 9px;border:1px solid var(--line);font-size:9.5px;letter-spacing:.04em;color:var(--ink3);background:rgba(241,240,234,.6)}
+
+/* WORK */
+.work-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:68px}
+.work-note{font-size:10px;color:var(--ink3);letter-spacing:.06em;border:1px solid var(--line);padding:5px 12px}
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.pc{position:relative;overflow:hidden;cursor:pointer;border:1px solid var(--line)}
+.pc.wide{grid-column:span 2}
+.pc-inner{width:100%;height:100%;transition:transform .65s cubic-bezier(.25,.46,.45,.94)}
+.pc:hover .pc-inner{transform:scale(1.04)}
+.pc-art{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.pc.wide .pc-art{aspect-ratio:16/6}
+.pc:not(.wide) .pc-art{aspect-ratio:4/3}
+.ga{background:radial-gradient(ellipse at 35% 45%,#dbd6ee,#eceaf7,#f4f3fa)}
+.gb{background:radial-gradient(ellipse at 65% 35%,#ecdbD6,#f3e8e5,#f9f3f1)}
+.gc{background:radial-gradient(ellipse at 50% 60%,#d1e6d8,#e3efe7,#f0f6f2)}
+.gd{background:radial-gradient(ellipse at 25% 65%,#ece3cc,#f3ecD6,#f9f5e6)}
+.ge{background:radial-gradient(ellipse at 75% 25%,#d6dbed,#e5e8f3,#f1f3fa)}
+.pc-svg{position:absolute;opacity:.18;width:48%;height:48%}
+.pc-noise{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.04'/%3E%3C/svg%3E");opacity:.5;mix-blend-mode:multiply}
+.pc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(248,247,243,.96) 0%,transparent 50%);padding:24px 26px;display:flex;flex-direction:column;justify-content:flex-end}
+.pc-num{font-size:9px;color:var(--ink3);letter-spacing:.14em;margin-bottom:4px}
+.pc-title{font-size:15px;font-weight:400;letter-spacing:-.01em;color:var(--ink);margin-bottom:3px}
+.pc-cat{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold)}
+.pc-arr{position:absolute;top:18px;right:18px;width:28px;height:28px;border:1px solid var(--box-b);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink);opacity:0;transition:opacity .28s;background:rgba(248,247,243,.9)}
+.pc:hover .pc-arr{opacity:1}
+
+/* SERVICES */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--box-b)}
+.svc-item{padding:44px 38px;border-right:1px solid var(--box-b);border-bottom:1px solid var(--box-b);transition:background .3s;position:relative}
+.svc-item:hover{background:var(--bg1)}
+.svc-item:nth-child(3n){border-right:none}
+.svc-item:nth-last-child(-n+3){border-bottom:none}
+.svc-num{position:absolute;top:20px;right:20px;width:22px;height:22px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:.06em;color:var(--ink3)}
+h3.svc-title{font-size:17px;font-weight:300;margin-bottom:11px;letter-spacing:-.01em;margin-top:8px}
+.svc-desc{font-size:12px;line-height:1.82;color:var(--ink2);margin-bottom:16px}
+
+/* EXPERIENCE */
+.exp-wrap{display:flex;flex-direction:column;border:1px solid var(--box-b)}
+.exp-item{padding:44px 48px;border-bottom:1px solid var(--box-b);transition:background .3s;position:relative}
+.exp-item:last-child{border-bottom:none}
+.exp-item:hover{background:rgba(241,240,234,.5)}
+.exp-top{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;margin-bottom:5px}
+h3.exp-role{font-size:17px;font-weight:400;letter-spacing:-.01em}
+.exp-date{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--line);padding:4px 10px;white-space:nowrap;margin-top:2px}
+.exp-company{font-size:10.5px;letter-spacing:.08em;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.exp-bullets{list-style:disc;padding-left:16px;display:flex;flex-direction:column;gap:8px}
+.exp-bullets li{font-size:12.5px;line-height:1.78;color:var(--ink2)}
+.exp-bullets li::marker{color:var(--ink3);font-size:10px}
+.exp-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:16px}
+.exp-tag{padding:3px 9px;border:1px solid var(--line);font-size:9px;letter-spacing:.05em;color:var(--ink3)}
+
+/* CONTACT */
+#contact{min-height:58vh;display:flex;flex-direction:column;justify-content:center}
+h2#h2c{font-size:clamp(50px,9vw,126px);font-weight:200;line-height:.88;letter-spacing:-.04em;margin-bottom:56px}
+h2#h2c em{font-style:italic;font-family:'Playfair Display',serif;color:#8C6831;}
+.contact-links{display:flex;gap:3px;flex-wrap:wrap}
+.c-link{display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);text-decoration:none;border:1px solid var(--box-b);padding:12px 22px;transition:all .25s}
+.c-link:hover{color:var(--ink);border-color:rgba(0,0,0,.2);background:var(--bg1)}
+.c-arr{display:inline-block;font-size:13px;transform:rotate(-45deg);transition:transform .28s}
+.c-link:hover .c-arr{transform:rotate(0)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:26px 80px;display:flex;justify-content:space-between;align-items:center;background:var(--bg1);position:relative;z-index:1}
+.ft{font-size:9.5px;color:var(--ink3);letter-spacing:.08em}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .8s ease,transform .8s ease}
+.rv.v{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+
+</style>
+</head>
+<body>
+
+<div id="vlines">
+  <div class="vc"></div><div class="vc"></div><div class="vc"></div>
+  <div class="vc"></div><div class="vc"></div><div class="vc"></div>
+  <div class="vc"></div>
+</div>
+
+<a href="mailto:nipunsh0@gmail.com" id="side-email">nipunsh0@gmail.com</a>
+
+<div id="cd"></div>
+<div id="cr"></div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">NS.</a>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div id="threeCanvas"></div>
+  <div class="vr-deco"><span>Portfolio 2026</span></div>
+  <div class="hero-inner">
+    <div class="hero-label">Graphic Designer · Video Editor · Fine Art</div>
+    <h1 id="h1">Nipun<br>Sharma</h1>
+    <p class="hero-subtitle">Design that <em>moves</em> &amp; inspires.</p>
+    <div class="hero-foot">
+      <p class="hero-desc">Graphic designer and video editor with 5 years of experience in visual communication. From brand identity and ad creatives to motion, photography and fine art.</p>
+      <div class="scroll-ind"><span class="scroll-line"></span>Scroll to explore</div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="tt">
+    <span class="ti">Graphic Design</span><span class="td">◆</span><span class="ti">Video Editing</span><span class="td">◆</span><span class="ti">Branding</span><span class="td">◆</span><span class="ti">Motion Graphics</span><span class="td">◆</span><span class="ti">Packaging Design</span><span class="td">◆</span><span class="ti">Fine Art</span><span class="td">◆</span><span class="ti">Ad Creatives</span><span class="td">◆</span><span class="ti">Photography</span><span class="td">◆</span><span class="ti">Infographics</span><span class="td">◆</span><span class="ti">Graphic Design</span><span class="td">◆</span><span class="ti">Video Editing</span><span class="td">◆</span><span class="ti">Branding</span><span class="td">◆</span><span class="ti">Motion Graphics</span><span class="td">◆</span><span class="ti">Packaging Design</span><span class="td">◆</span><span class="ti">Fine Art</span><span class="td">◆</span><span class="ti">Ad Creatives</span><span class="td">◆</span><span class="ti">Photography</span><span class="td">◆</span><span class="ti">Infographics</span><span class="td">◆</span>
+  </div>
+</div>
+
+<section id="about" class="sw">
+  <div class="sec-head"><div class="sec-num">01</div><span class="sec-label">About</span><div class="sec-rule"></div></div>
+  <div class="about-grid">
+    <div>
+      <h2 id="h2a" class="rv">Nipun is a multidisciplinary creative designing for global brands, <em>crafting motion</em>, and making art that lasts.</h2>
+      <div class="stats-row rv d1">
+        <div class="stat-box"><div class="stat-n">5+</div><div class="stat-l">Years Active</div></div>
+        <div class="stat-box"><div class="stat-n">8+</div><div class="stat-l">Companies</div></div>
+        <div class="stat-box"><div class="stat-n">WPP</div><div class="stat-l">Currently Employed</div></div>
+      </div>
+    </div>
+    <div class="rv d2">
+      <p class="about-body">Graphic designer and video editor with 5 years of experience in visual communication. Skilled in Adobe Creative Suite, AI tools, brand building, ad creatives, marketing collaterals, emailers, infographics, presentations, social media creatives, videography, photography and post-production.</p>
+      <p class="about-body">Credits include short films, music videos and the feature film <em>Hukum Ka Ikka</em> for the STAGE App. An avid learner of new technologies and design trends, always exploring innovations in art and design.</p>
+      <div class="skills-wrap">
+        <span class="sk">Brand Building</span><span class="sk">Ad Creatives</span><span class="sk">Social Media</span><span class="sk">Video Editing</span><span class="sk">Photography</span><span class="sk">Infographics</span><span class="sk">Marketing Collateral</span><span class="sk">Fine Art</span>
+      </div>
+      <div class="tools-wrap">
+        <span class="tc">Adobe Illustrator</span><span class="tc">Photoshop</span><span class="tc">Premiere Pro</span><span class="tc">InDesign</span><span class="tc">Adobe Firefly</span><span class="tc">AI Automation</span><span class="tc">Nano Banana Pro</span><span class="tc">VEO 3</span><span class="tc">Claude AI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="sw">
+  <div class="work-head">
+    <div class="sec-head" style="margin-bottom:0"><div class="sec-num">02</div><span class="sec-label">Selected Work</span><div class="sec-rule" style="width:60px;flex:none"></div></div>
+    <div class="work-note">Hover to explore</div>
+  </div>
+  <div class="proj-grid">
+    <div class="pc wide rv"><div class="pc-inner"><div class="pc-art ga"><svg class="pc-svg" viewBox="0 0 200 200" fill="none" stroke="#3a2870"><polygon points="100,12 188,188 12,188"></polygon><polygon points="100,42 162,172 38,172"></polygon><circle cx="100" cy="115" r="38"></circle></svg><div class="pc-noise"></div></div></div><div class="pc-overlay"><div class="pc-num">001</div><div class="pc-title">Brand Identity &amp; Visual Systems</div><div class="pc-cat">Branding · Identity · Strategy</div></div><div class="pc-arr">↗</div></div>
+    <div class="pc rv d1"><div class="pc-inner"><div class="pc-art gb"><svg class="pc-svg" viewBox="0 0 200 200" fill="none" stroke="#6a2222"><circle cx="100" cy="100" r="68"></circle><circle cx="100" cy="100" r="44"></circle><circle cx="100" cy="100" r="20"></circle><line x1="100" y1="32" x2="100" y2="168"></line><line x1="32" y1="100" x2="168" y2="100"></line></svg><div class="pc-noise"></div></div></div><div class="pc-overlay"><div class="pc-num">002</div><div class="pc-title">E-Commerce Ad Creatives</div><div class="pc-cat">Digital Ads · Reckitt · Quick-Commerce</div></div><div class="pc-arr">↗</div></div>
+    <div class="pc rv d2"><div class="pc-inner"><div class="pc-art gc"><svg class="pc-svg" viewBox="0 0 200 200" fill="none" stroke="#185828"><rect x="28" y="28" width="144" height="144" rx="4"></rect><rect x="58" y="58" width="84" height="84" rx="4"></rect><rect x="84" y="84" width="32" height="32"></rect></svg><div class="pc-noise"></div></div></div><div class="pc-overlay"><div class="pc-num">003</div><div class="pc-title">Sports Design &amp; Photography</div><div class="pc-cat">Conscient Sports · Football · Cricket</div></div><div class="pc-arr">↗</div></div>
+    <div class="pc wide rv"><div class="pc-inner"><div class="pc-art gd"><svg class="pc-svg" viewBox="0 0 400 150" fill="none" stroke="#6a4610"><path d="M0 75 Q50 18 100 75 Q150 132 200 75 Q250 18 300 75 Q350 132 400 75" stroke-width="1.5"></path><path d="M0 75 Q50 38 100 75 Q150 112 200 75 Q250 38 300 75 Q350 112 400 75" opacity=".3"></path></svg><div class="pc-noise"></div></div></div><div class="pc-overlay"><div class="pc-num">004</div><div class="pc-title">Motion Graphics &amp; Reels</div><div class="pc-cat">Motion · Video Production</div></div><div class="pc-arr">↗</div></div>
+    <div class="pc rv d1"><div class="pc-inner"><div class="pc-art ge"><svg class="pc-svg" viewBox="0 0 200 200" fill="none" stroke="#283468"><polygon points="100,14 182,56 182,144 100,186 18,144 18,56"></polygon><polygon points="100,44 156,74 156,126 100,156 44,126 44,74"></polygon></svg><div class="pc-noise"></div></div></div><div class="pc-overlay"><div class="pc-num">005</div><div class="pc-title">Apple Inc. Web Graphics</div><div class="pc-cat">Production Art · Web · Localisation</div></div><div class="pc-arr">↗</div></div>
+    <div class="pc rv d2"><div class="pc-inner"><div class="pc-art ga"><svg class="pc-svg" viewBox="0 0 200 200" fill="none" stroke="#3a2870"><ellipse cx="100" cy="100" rx="68" ry="38"></ellipse><ellipse cx="100" cy="100" rx="38" ry="68"></ellipse><circle cx="100" cy="100" r="14" fill="rgba(0,0,0,.06)"></circle></svg><div class="pc-noise"></div></div></div><div class="pc-overlay"><div class="pc-num">006</div><div class="pc-title">Fine Art &amp; Illustration</div><div class="pc-cat">Painting · Sketching · Fine Art</div></div><div class="pc-arr">↗</div></div>
+  </div>
+</section>
+
+<section id="services" class="sw">
+  <div class="sec-head"><div class="sec-num">03</div><span class="sec-label">What I Do</span><div class="sec-rule"></div></div>
+  <div class="svc-grid rv">
+    <div class="svc-item"><div class="svc-num">01</div><h3 class="svc-title">Ad Creatives &amp; Social Media</h3><p class="svc-desc">High-impact ad creatives for quick-commerce, e-commerce, and social platforms. Optimised for digital performance and brand alignment.</p><div class="tools-wrap"><span class="tc">Photoshop</span><span class="tc">Illustrator</span><span class="tc">Firefly</span></div></div>
+    <div class="svc-item"><div class="svc-num">02</div><h3 class="svc-title">Brand Identity &amp; Design</h3><p class="svc-desc">Complete brand guidelines covering logos, colour palettes, mock-ups and collaterals. Built to tell a cohesive and compelling brand story.</p><div class="tools-wrap"><span class="tc">Illustrator</span><span class="tc">Photoshop</span><span class="tc">InDesign</span></div></div>
+    <div class="svc-item"><div class="svc-num">03</div><h3 class="svc-title">Motion &amp; Video Editing</h3><p class="svc-desc">Reels, after-movies and motion graphics crafted with rhythm, energy and cinematic polish. Credits in short films and feature films.</p><div class="tools-wrap"><span class="tc">Premiere Pro</span></div></div>
+    <div class="svc-item"><div class="svc-num">04</div><h3 class="svc-title">Marketing Collateral</h3><p class="svc-desc">Emailers, infographics, presentations, UI banners, posters and data visualisation. Crafted to communicate with clarity and visual impact.</p><div class="tools-wrap"><span class="tc">InDesign</span><span class="tc">Illustrator</span><span class="tc">Photoshop</span></div></div>
+    <div class="svc-item"><div class="svc-num">05</div><h3 class="svc-title">Photography &amp; Post-Production</h3><p class="svc-desc">On-ground photography and live editing during events, matches and campaigns. Delivered fast for social and marketing use.</p><div class="tools-wrap"><span class="tc">Lightroom</span><span class="tc">Photoshop</span><span class="tc">Premiere Pro</span></div></div>
+    <div class="svc-item"><div class="svc-num">06</div><h3 class="svc-title">Fine Art</h3><p class="svc-desc">BFA-trained painter and sketch artist with conservation experience and gallery exhibition credits across multiple prestigious shows.</p><div class="tools-wrap"><span class="tc">Painting</span><span class="tc">Sketching</span><span class="tc">Conservation</span></div></div>
+  </div>
+</section>
+
+<section id="experience" class="sw">
+  <div class="sec-head"><div class="sec-num">04</div><span class="sec-label">Experience</span><div class="sec-rule"></div></div>
+  <div class="exp-wrap">
+    <div class="exp-item rv">
+      <div class="exp-top"><h3 class="exp-role">Consultant Graphic Designer</h3><div class="exp-date">Feb 2026 · Present</div></div>
+      <div class="exp-company">WPP Production · Client: Apollo Tyres</div>
+      <ul class="exp-bullets">
+        <li>Social media designer for Apollo Tyres Indian Cricket Team across Instagram and X.</li>
+        <li>Live creatives production for Apollo's real-time campaign activations during cricket matches.</li>
+        <li>Collaborated with the Copy team, Art Director and Art Group Head for strategy and execution.</li>
+        <li>Kept skills updated with new tools, technologies and design trends through regular self-development.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">Social Media</span><span class="exp-tag">Live Production</span><span class="exp-tag">Cricket</span><span class="exp-tag">Instagram</span><span class="exp-tag">X</span></div>
+    </div>
+    <div class="exp-item rv d1">
+      <div class="exp-top"><h3 class="exp-role">Graphic Designer, Freelance</h3><div class="exp-date">Nov 2025 · Jan 2026</div></div>
+      <div class="exp-company">WPP Production · Client: Reckitt · Dettol, Durex, Moov, Veet</div>
+      <ul class="exp-bullets">
+        <li>Designed original ad creatives for quick-commerce and e-commerce platforms including Zepto, Amazon, Blinkit, BigBasket, Swiggy Instamart and Flipkart Minutes.</li>
+        <li>Collaborated with brand managers, Hogarth designers and Reckitt marketing teams to ensure brand alignment and creative consistency.</li>
+        <li>Produced high-quality, web-optimised creatives using advanced Photoshop and Illustrator skills, achieving a lower CPR.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">E-Commerce Ads</span><span class="exp-tag">Quick-Commerce</span><span class="exp-tag">Dettol</span><span class="exp-tag">Durex</span><span class="exp-tag">Moov</span><span class="exp-tag">Veet</span></div>
+    </div>
+    <div class="exp-item rv d2">
+      <div class="exp-top"><h3 class="exp-role">Graphic Production Artist, Freelance</h3><div class="exp-date">Jul 2025 · Sep 2025</div></div>
+      <div class="exp-company">WPP Production · Client: Apple Inc.</div>
+      <ul class="exp-bullets">
+        <li>Updated product imagery and UI elements in Photoshop comps and output final web graphics.</li>
+        <li>Structured Photoshop comps to optimise production design and localisation workflows using slices, smart objects and layer comps.</li>
+        <li>Collaborated with producers, traffic, development, publishing and international teams for efficient file handoffs.</li>
+        <li>Reviewed final webpages with an exacting eye, ensuring flawless graphics and layouts.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">Web Graphics</span><span class="exp-tag">Localisation</span><span class="exp-tag">Photoshop</span><span class="exp-tag">UI Elements</span><span class="exp-tag">Production Design</span></div>
+    </div>
+    <div class="exp-item rv">
+      <div class="exp-top"><h3 class="exp-role">Graphic Designer</h3><div class="exp-date">Dec 2023 · Jan 2025</div></div>
+      <div class="exp-company">Conscient Sports LLP</div>
+      <ul class="exp-bullets">
+        <li>Led design projects from conceptualisation to execution for football and cricket campaigns.</li>
+        <li>Designed Meta ads, Google ads, print and digital designs, and social media creatives aligned with brand identity.</li>
+        <li>Created graphics, illustrations, posters, infographics, UI banners, typography and data visualisation for player reports.</li>
+        <li>Captured and edited high-quality match footage, training sessions and promotional videos for social media.</li>
+        <li>Performed live editing of images and videos during international tournaments and tours.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">Meta Ads</span><span class="exp-tag">Google Ads</span><span class="exp-tag">Sports Design</span><span class="exp-tag">Live Editing</span><span class="exp-tag">Data Viz</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="sw">
+  <div class="sec-head"><div class="sec-num">05</div><span class="sec-label">Contact</span><div class="sec-rule"></div></div>
+  <h2 id="h2c" class="rv">Let's create<br>something<br><em>remarkable.</em></h2>
+  <div class="contact-links rv d1">
+    <a href="mailto:nipunsh0@gmail.com" class="c-link">nipunsh0@gmail.com <span class="c-arr">↗</span></a>
+    <a href="https://in.linkedin.com/in/nipun-sharma-designer" target="_blank" class="c-link">LinkedIn <span class="c-arr">↗</span></a>
+  </div>
+</section>
+
+<footer>
+  <span class="ft">© 2026 Nipun Sharma. All rights reserved.</span>
+  <span class="ft">Design · Motion · Photography · Fine Art</span>
+</footer>
+
+<script>
+(function(){
+  var T=window.THREE;
+  if(T){
+    var el=document.getElementById('threeCanvas'),W=el.clientWidth,H=el.clientHeight;
+    var sc=new T.Scene(),cam=new T.PerspectiveCamera(54,W/H,.1,1000);
+    cam.position.z=54;
+    var rdr=new T.WebGLRenderer({antialias:true,alpha:true});
+    rdr.setSize(W,H);rdr.setPixelRatio(Math.min(devicePixelRatio,2));rdr.setClearColor(0,0);
+    el.appendChild(rdr.domElement);
+    var buf=new T.BufferGeometry(),p=new Float32Array(700*3);
+    for(var i=0;i<700;i++){p[i*3]=(Math.random()-.5)*230;p[i*3+1]=(Math.random()-.5)*140;p[i*3+2]=(Math.random()-.5)*100;}
+    buf.setAttribute('position',new T.BufferAttribute(p,3));
+    sc.add(new T.Points(buf,new T.PointsMaterial({color:0xbbb8ae,size:.26,transparent:true,opacity:.7})));
+    function ws(g,c,x,y,z,rx,ry){var m=new T.Mesh(g,new T.MeshBasicMaterial({color:c,wireframe:true}));m.position.set(x,y,z);sc.add(m);return{m:m,rx:rx,ry:ry};}
+    var sh=[ws(new T.IcosahedronGeometry(9,0),0xc9c5b5,26,5,-10,.003,.006),ws(new T.TorusGeometry(6,1.8,6,12),0xd0ccba,-30,-5,-7,.007,.003),ws(new T.OctahedronGeometry(5,0),0xc5c1b0,-9,15,-18,.005,.008),ws(new T.TetrahedronGeometry(4.5,0),0xcbc7b5,13,-13,-14,.004,.005)];
+    var mx=0,my=0;
+    document.addEventListener('mousemove',function(e){mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2;});
+    var ck=new T.Clock();
+    !function loop(){requestAnimationFrame(loop);var t=ck.getElapsedTime();sc.rotation.y=t*.011;sh.forEach(function(s){s.m.rotation.x+=s.rx;s.m.rotation.y+=s.ry;});cam.position.x+=(mx*5-cam.position.x)*.022;cam.position.y+=(-my*3.5-cam.position.y)*.022;cam.lookAt(sc.position);rdr.render(sc,cam);}();
+    window.addEventListener('resize',function(){W=el.clientWidth;H=el.clientHeight;cam.aspect=W/H;cam.updateProjectionMatrix();rdr.setSize(W,H);});
+  }
+  var cd=document.getElementById('cd'),cr=document.getElementById('cr'),fx=0,fy=0,mx2=0,my2=0;
+  document.addEventListener('mousemove',function(e){mx2=e.clientX;my2=e.clientY;cd.style.left=mx2+'px';cd.style.top=my2+'px';});
+  !function loop(){fx+=(mx2-fx)*.13;fy+=(my2-fy)*.13;cr.style.left=fx+'px';cr.style.top=fy+'px';requestAnimationFrame(loop);}();
+  document.querySelectorAll('a,.pc,.svc-item,.sk,.exp-item').forEach(function(e){e.addEventListener('mouseenter',function(){document.body.classList.add('hs');});e.addEventListener('mouseleave',function(){document.body.classList.remove('hs');});});
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('v');});},{threshold:.07,rootMargin:'0px 0px -36px 0px'});
+  document.querySelectorAll('.rv').forEach(function(e){obs.observe(e);});
+  var nv=document.getElementById('nav');
+  window.addEventListener('scroll',function(){nv.classList.toggle('s',scrollY>55);});
+})();
+</script>
+
+</body>
+</html>
